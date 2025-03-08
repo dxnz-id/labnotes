@@ -155,7 +155,7 @@ class EventResource extends Resource
                     ->maxSize(524288)
                     ->visibility('private')
                     ->columnSpan(2)
-                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'images'))
+                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'videos'))
                     ->nullable(),
                 FileUpload::make('document')
                     ->label('Documents')
@@ -182,7 +182,7 @@ class EventResource extends Resource
                     ->maxSize(65536)
                     ->visibility('private')
                     ->columnSpan(2)
-                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'images'))
+                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'documents'))
                     ->nullable(),
             ]);
     }

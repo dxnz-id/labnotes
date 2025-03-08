@@ -27,6 +27,29 @@ class EventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    /**
+     * Updates the upload directories for all file upload fields when event name or date changes
+     *
+     * @param Set $set The setter function to update field states
+     * @param Get $get The getter function to retrieve field states
+     * @return void
+     */
+    
+    protected static function getUploadDirectory(Get $get, string $folder): string
+    {
+        $date = $get('date');
+        $event = $get('event');
+
+        if (empty($date) || empty($event)) {
+            return "events/temp-uploads/{$folder}";
+        }
+
+        $formattedDate = date('Y-m-d', strtotime($date));
+        $sanitizedEvent = Str::slug($event);
+
+        return "events/{$formattedDate}-{$sanitizedEvent}/{$folder}";
+    }
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -34,15 +57,12 @@ class EventResource extends Resource
             ->schema([
                 TextInput::make('event')
                     ->label('Event Name')
-                    ->live(onBlur: true)
+                    ->live(onBlur: true, debounce: 500)
                     ->columnSpan(3)
-                    ->required()
-                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
-                        // Update the upload directory when event name changes
-                        static::updateUploadDirectory($set, $get);
-                    }),
+                    ->required(),
                 DatePicker::make('date')
                     ->label('Date')
+                    ->live(onBlur: true, debounce: 500)
                     ->native(false)
                     ->displayFormat('d M Y')
                     ->columnSpan(3)
@@ -70,7 +90,7 @@ class EventResource extends Resource
                     ->label('Participants')
                     ->columns(3)
                     ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
-                    ->live(onBlur: true)
+                    ->live(onBlur: true, debounce: 500)
                     ->collapsible()
                     ->minItems(1)
                     ->columnSpan(6)
@@ -89,7 +109,7 @@ class EventResource extends Resource
                 Select::make('speaker')
                     ->label('Speaker')
                     ->multiple()
-                    ->live(onBlur: true)
+                    ->live(onBlur: true, debounce: 500)
                     ->columnSpan(6)
                     ->nullable()
                     ->options(function (Get $get) {
@@ -109,24 +129,12 @@ class EventResource extends Resource
                     ->image()
                     ->multiple()
                     ->previewable(false)
-                    ->minSize(256)
-                    ->maxSize(20480)
+                    ->minSize(64)
+                    ->maxSize(32768)
                     ->visibility('private')
                     ->columnSpan(2)
-                    ->nullable()
-                    ->directory(function (Get $get) {
-                        $date = $get('date');
-                        $event = $get('event');
-
-                        if (empty($date) || empty($event)) {
-                            return 'events/temp-uploads';
-                        }
-
-                        $formattedDate = date('Y-m-d', strtotime($date));
-                        $sanitizedEvent = Str::slug($event);
-
-                        return "events/{$formattedDate}-{$sanitizedEvent}/images";
-                    }),
+                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'images'))
+                    ->nullable(),
                 FileUpload::make('video')
                     ->label('Video Documentation')
                     ->acceptedFileTypes([
@@ -144,23 +152,11 @@ class EventResource extends Resource
                     ->multiple()
                     ->previewable(false)
                     ->minSize(512)
-                    ->maxSize(1048576)
+                    ->maxSize(524288)
                     ->visibility('private')
                     ->columnSpan(2)
-                    ->nullable()
-                    ->directory(function (Get $get) {
-                        $date = $get('date');
-                        $event = $get('event');
-
-                        if (empty($date) || empty($event)) {
-                            return 'events/temp-uploads';
-                        }
-
-                        $formattedDate = date('Y-m-d', strtotime($date));
-                        $sanitizedEvent = Str::slug($event);
-
-                        return "events/{$formattedDate}-{$sanitizedEvent}/videos";
-                    }),
+                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'images'))
+                    ->nullable(),
                 FileUpload::make('document')
                     ->label('Documents')
                     ->acceptedFileTypes([
@@ -182,24 +178,12 @@ class EventResource extends Resource
                     ])
                     ->multiple()
                     ->previewable(false)
-                    ->minSize(256)
-                    ->maxSize(20480)
+                    ->minSize(64)
+                    ->maxSize(65536)
                     ->visibility('private')
                     ->columnSpan(2)
-                    ->nullable()
-                    ->directory(function (Get $get) {
-                        $date = $get('date');
-                        $event = $get('event');
-
-                        if (empty($date) || empty($event)) {
-                            return 'events/temp-uploads';
-                        }
-
-                        $formattedDate = date('Y-m-d', strtotime($date));
-                        $sanitizedEvent = Str::slug($event);
-
-                        return "events/{$formattedDate}-{$sanitizedEvent}/documents";
-                    }),
+                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'images'))
+                    ->nullable(),
             ]);
     }
 

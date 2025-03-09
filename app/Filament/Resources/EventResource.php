@@ -9,13 +9,22 @@ use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -254,12 +263,46 @@ class EventResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+
+                ViewAction::make()->label(false)->icon(false)->slideOver(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('event')
+                    ->label('Event Name'),
+                TextEntry::make('date')
+                    ->label('Date')
+                    ->dateTime('d M Y'),
+                RepeatableEntry::make('responsible_person')
+                    ->label('Responsible Persons')
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('email')
+                            ->label('Email'),
+                        TextEntry::make('phone_number')
+                            ->label('Phone Number'),
+                    ]),
+                RepeatableEntry::make('participants')
+                    ->label('Participants')
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('email')
+                            ->label('Email'),
+                        TextEntry::make('phone_number')
+                            ->label('Phone Number'),
+                    ]),
             ]);
     }
 

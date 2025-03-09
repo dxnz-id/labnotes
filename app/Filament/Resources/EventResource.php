@@ -16,6 +16,8 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -34,22 +36,22 @@ class EventResource extends Resource
      * @param Get $get The getter function to retrieve field states
      * @return void
      */
-    
+
     protected static function getUploadDirectory(Get $get, string $folder): string
     {
-        $date = $get('date');
-        $event = $get('event');
+        $recordId = $get('id');
 
-        if (empty($date) || empty($event)) {
-            return "events/temp-uploads/{$folder}";
+        // If we have a record ID, use it directly
+        if (!empty($recordId)) {
+            return "events/{$recordId}/{$folder}";
         }
 
-        $formattedDate = date('Y-m-d', strtotime($date));
-        $sanitizedEvent = Str::slug($event);
+        // For new records, generate a unique ID
+        $uniqueId = uniqid();
 
-        return "events/{$formattedDate}-{$sanitizedEvent}/{$folder}";
+        return "events/{$uniqueId}/{$folder}";
     }
-    
+
     public static function form(Form $form): Form
     {
         return $form
@@ -57,12 +59,10 @@ class EventResource extends Resource
             ->schema([
                 TextInput::make('event')
                     ->label('Event Name')
-                    ->live(onBlur: true, debounce: 500)
                     ->columnSpan(3)
                     ->required(),
                 DatePicker::make('date')
                     ->label('Date')
-                    ->live(onBlur: true, debounce: 500)
                     ->native(false)
                     ->displayFormat('d M Y')
                     ->columnSpan(3)
@@ -116,9 +116,12 @@ class EventResource extends Resource
                         $participants = $get('participants') ?? [];
                         $options = [];
 
-                        foreach ($participants as $index => $participant) {
+                        foreach ($participants as $participant) {
                             if (isset($participant['name'])) {
-                                $options[$index] = $participant['name'];
+                                // Store the name directly as both key and value
+                                // This ensures we store the actual name in the database
+                                $name = $participant['name'];
+                                $options[$name] = $name;
                             }
                         }
 
@@ -126,17 +129,21 @@ class EventResource extends Resource
                     }),
                 FileUpload::make('photo')
                     ->label('Image Documentation')
+                    ->panelLayout('grid')
                     ->image()
                     ->multiple()
-                    ->previewable(false)
+                    ->preserveFilenames(true)
+                    ->previewable(true)
                     ->minSize(64)
                     ->maxSize(32768)
                     ->visibility('private')
                     ->columnSpan(2)
-                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'images'))
+                    ->directory(fn(Get $get) => static::getUploadDirectory($get, 'images'))
+                    ->maxParallelUploads(3)
                     ->nullable(),
                 FileUpload::make('video')
                     ->label('Video Documentation')
+                    ->panelLayout('grid')
                     ->acceptedFileTypes([
                         'video/mp4',
                         'video/mpeg',
@@ -150,15 +157,18 @@ class EventResource extends Resource
                         'video/x-matroska',
                     ])
                     ->multiple()
+                    ->preserveFilenames(true)
                     ->previewable(false)
                     ->minSize(512)
                     ->maxSize(524288)
                     ->visibility('private')
                     ->columnSpan(2)
-                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'videos'))
+                    ->directory(fn(Get $get) => static::getUploadDirectory($get, 'videos'))
+                    ->maxParallelUploads(3)
                     ->nullable(),
                 FileUpload::make('document')
                     ->label('Documents')
+                    ->panelLayout('grid')
                     ->acceptedFileTypes([
                         // Microsoft Office
                         'application/msword',                                                  // Word (.doc)
@@ -177,12 +187,14 @@ class EventResource extends Resource
                         'application/vnd.oasis.opendocument.presentation',                     // OpenDocument Presentation (.odp)
                     ])
                     ->multiple()
+                    ->preserveFilenames(true)
                     ->previewable(false)
                     ->minSize(64)
                     ->maxSize(65536)
                     ->visibility('private')
                     ->columnSpan(2)
-                    ->directory(fn (Get $get) => static::getUploadDirectory($get, 'documents'))
+                    ->directory(fn(Get $get) => static::getUploadDirectory($get, 'documents'))
+                    ->maxParallelUploads(3)
                     ->nullable(),
             ]);
     }
@@ -191,10 +203,55 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('event')
+                    ->label('Event Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('date')
+                    ->label('Date')
+                    ->dateTime('d M Y')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('responsible_person')
+                    ->label('Responsible Persons')
+                    ->state(function ($record) {
+                        if (!is_array($record->responsible_person)) {
+                            return [];
+                        }
+
+                        return collect($record->responsible_person)
+                            ->map(fn($person) => $person['name'] ?? null)
+                            ->filter()
+                            ->toArray();
+                    })
+                    ->badge()
+                    ->color('success'),
+                TextColumn::make('speaker')
+                    ->label('Speakers')
+                    ->badge()
+                    ->color('primary')
             ])
             ->filters([
-                //
+                SelectFilter::make('year')
+                    ->label('Year')
+                    ->options(function () {
+                        return Event::query()
+                            ->selectRaw('YEAR(date) as year')
+                            ->distinct()
+                            ->orderBy('year', 'desc')
+                            ->pluck('year', 'year')
+                            ->mapWithKeys(fn($year) => [$year => $year]);
+                    }),
+                SelectFilter::make('month')
+                    ->label('Month')
+                    ->options(function () {
+                        return Event::query()
+                            ->selectRaw('MONTHNAME(date) as month')
+                            ->distinct()
+                            ->orderBy('month', 'asc')
+                            ->pluck('month', 'month')
+                            ->mapWithKeys(fn($month) => [$month => $month]);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -20,8 +20,10 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\Facades\FilamentEditProfile;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -42,7 +44,10 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->plugins([
-                FilamentEditProfilePlugin::make(),
+                FilamentBackgroundsPlugin::make()
+                    ->remember(900)
+                    ->showAttribution(false),
+                EasyFooterPlugin::make(),
                 FilamentEditProfilePlugin::make()
                     ->setTitle('My Profile')
                     ->setNavigationLabel('My Profile')

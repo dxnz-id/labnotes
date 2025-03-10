@@ -13,6 +13,7 @@
         "joaopaulolndev/filament-edit-profile": "^1.0",
         "laravel/framework": "^11.44",
         "laravel/tinker": "^2.10.1",
+        "swisnl/filament-backgrounds": "^1.1",
         "webplusm/gallery-json-media": "^2.2"
     },
     "require-dev": {

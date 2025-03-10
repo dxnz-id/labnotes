@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use Awcodes\LightSwitch\Enums\Alignment;
+use Awcodes\LightSwitch\LightSwitchPlugin;
 use Devonab\FilamentEasyFooter\EasyFooterPlugin;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -44,10 +46,12 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->plugins([
+                EasyFooterPlugin::make(),
+                LightSwitchPlugin::make()
+                    ->position(Alignment::TopCenter),
                 FilamentBackgroundsPlugin::make()
                     ->remember(900)
                     ->showAttribution(false),
-                EasyFooterPlugin::make(),
                 FilamentEditProfilePlugin::make()
                     ->setTitle('My Profile')
                     ->setNavigationLabel('My Profile')

@@ -10,6 +10,7 @@
         "devonab/filament-easy-footer": "^1.1",
         "filament/filament": "^3.3",
         "illuminate/contracts": "*",
+        "joaopaulolndev/filament-edit-profile": "^1.0",
         "laravel/framework": "^11.44",
         "laravel/tinker": "^2.10.1",
         "webplusm/gallery-json-media": "^2.2"

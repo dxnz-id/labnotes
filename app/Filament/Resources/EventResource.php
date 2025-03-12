@@ -358,13 +358,31 @@ class EventResource extends Resource
                                             ]),
                                         Tabs\Tab::make('Videos')
                                             ->schema([
-                                                TextEntry::make('video')
-                                                    ->label('Video Documentation')
+                                                RepeatableEntry::make('video')
+                                                    ->label(false)
+                                                    ->schema([
+                                                        TextEntry::make('video')
+                                                            ->label(false)
+                                                            ->state(function ($record) {
+                                                                return collect($record->document)
+                                                                    ->map(fn($file) => basename($file))
+                                                                    ->toArray();
+                                                            })
+                                                    ])
                                             ]),
                                         Tabs\Tab::make('Documents')
                                             ->schema([
-                                                TextEntry::make('document')
-                                                    ->label('Documents')
+                                                RepeatableEntry::make('document')
+                                                    ->label(false)
+                                                    ->schema([
+                                                        TextEntry::make('file')
+                                                            ->label(false)
+                                                            ->state(function ($record) {
+                                                                return collect($record->document)
+                                                                    ->map(fn($file) => basename($file))
+                                                                    ->toArray();
+                                                            })
+                                                    ]),
                                             ]),
                                     ]),
                             ]),

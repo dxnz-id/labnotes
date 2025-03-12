@@ -11,12 +11,14 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -31,6 +33,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
+
+use function Laravel\Prompts\text;
 
 class EventResource extends Resource
 {
@@ -278,31 +282,119 @@ class EventResource extends Resource
     {
         return $infolist
             ->schema([
-                TextEntry::make('event')
-                    ->label('Event Name'),
-                TextEntry::make('date')
-                    ->label('Date')
-                    ->dateTime('d M Y'),
-                RepeatableEntry::make('responsible_person')
-                    ->label('Responsible Persons')
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Name'),
-                        TextEntry::make('email')
-                            ->label('Email'),
-                        TextEntry::make('phone_number')
-                            ->label('Phone Number'),
+                Tabs::make('Event Details')
+                    ->columnSpan(2)
+                    ->tabs([
+                        Tabs\Tab::make('Overview')
+                            ->columns(2)
+                            ->schema([
+                                TextEntry::make('event')
+                                    ->label('Event Name'),
+                                TextEntry::make('date')
+                                    ->label('Date')
+                                    ->dateTime('d M Y'),
+                                TextEntry::make('responsible_person')
+                                    ->label('Responsible Persons')
+                                    ->badge()
+                                    ->color('info')
+                                    ->state(function ($record) {
+                                        if (!is_array($record->responsible_person)) {
+                                            return [];
+                                        }
+
+                                        return collect($record->responsible_person)
+                                            ->map(fn($person) => $person['name'] ?? null)
+                                            ->filter()
+                                            ->toArray();
+                                    }),
+                                TextEntry::make('speaker')
+                                    ->label('Speakers')
+                                    ->badge()
+                                    ->color('success'),
+                                TextEntry::make('participants')
+                                    ->label('Participants')
+                                    ->badge()
+                                    ->state(function ($record) {
+                                        if (!is_array($record->participants)) {
+                                            return [];
+                                        }
+
+                                        return collect($record->participants)
+                                            ->map(fn($participant) => $participant['name'] ?? null)
+                                            ->filter()
+                                            ->toArray();
+                                    }),
+                                TextEntry::make('total_images')
+                                    ->label('Total Images')
+                                    ->badge()
+                                    ->color('warning')
+                                    ->state(function ($record) {
+                                        return count($record->photo);
+                                    }),
+                                TextEntry::make('total_videos')
+                                    ->label('Total Videos')
+                                    ->badge()
+                                    ->color('danger')
+                                    ->state(function ($record) {
+                                        return count($record->video);
+                                    }),
+                                TextEntry::make('total_documents')
+                                    ->label('Total Documents')
+                                    ->badge()
+                                    ->color('primary')
+                                    ->state(function ($record) {
+                                        return count($record->document);
+                                    }),
+                            ]),
+                        Tabs\Tab::make('Media')
+                            ->schema([
+                                Tabs::make()
+                                    ->tabs([
+                                        Tabs\Tab::make('Images')
+                                            ->schema([
+                                                ImageEntry::make('photo')
+                                                    ->label(false)
+                                                    ->visibility('private'),
+                                            ]),
+                                        Tabs\Tab::make('Videos')
+                                            ->schema([
+                                                TextEntry::make('video')
+                                                    ->label('Video Documentation')
+                                            ]),
+                                        Tabs\Tab::make('Documents')
+                                            ->schema([
+                                                TextEntry::make('document')
+                                                    ->label('Documents')
+                                            ]),
+                                    ]),
+                            ]),
                     ]),
-                RepeatableEntry::make('participants')
-                    ->label('Participants')
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Name'),
-                        TextEntry::make('email')
-                            ->label('Email'),
-                        TextEntry::make('phone_number')
-                            ->label('Phone Number'),
-                    ]),
+
+                // TextEntry::make('event')
+                //     ->label('Event Name'),
+                // TextEntry::make('date')
+                //     ->label('Date')
+                //     ->dateTime('d M Y'),
+                // RepeatableEntry::make('responsible_person')
+                //     ->label('Responsible Persons')
+                //     ->schema([
+                //         TextEntry::make('name')
+                //             ->label('Name'),
+                //         TextEntry::make('email')
+                //             ->label('Email'),
+                //         TextEntry::make('phone_number')
+                //             ->label('Phone Number'),
+                //     ]),
+                // RepeatableEntry::make('participants')
+                //     ->label('Participants')
+                //     ->schema([
+                //         TextEntry::make('name')
+                //             ->label('Name'),
+                //         TextEntry::make('email')
+                //             ->label('Email'),
+                //         TextEntry::make('phone_number')
+                //             ->label('Phone Number'),
+                //     ]),
             ]);
     }
 

@@ -52,15 +52,11 @@ class EventResource extends Resource
 
     protected static function getUploadDirectory(Get $get, string $folder): string
     {
-        $recordId = $get('id');
+        $eventDate = $get('date');
+        $eventName = $get('event');
 
-        // If we have a record ID, use it directly
-        if (!empty($recordId)) {
-            return "events/{$recordId}/{$folder}";
-        }
-
-        // For new records, generate a unique ID
-        $uniqueId = uniqid();
+        // Generate a unique ID based on event name and date
+        $uniqueId = Str::slug($eventDate . '-' . $eventName);
 
         return "events/{$uniqueId}/{$folder}";
     }
@@ -78,7 +74,9 @@ class EventResource extends Resource
                     ->label('Date')
                     ->native(false)
                     ->displayFormat('d M Y')
+                    ->default(today())
                     ->columnSpan(3)
+                    ->live(onBlur: true, debounce: 500)
                     ->required(),
                 Repeater::make('responsible_person')
                     ->label('Responsible Persons')

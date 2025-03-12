@@ -16,7 +16,7 @@ class Event extends Model
         'video',
         'document',
     ];
-    
+
     protected $casts = [
         'responsible_person' => 'array',
         'participants' => 'array',

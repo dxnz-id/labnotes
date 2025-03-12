@@ -52,13 +52,14 @@ class EventResource extends Resource
 
     protected static function getUploadDirectory(Get $get, string $folder): string
     {
-        $eventDate = $get('date');
-        $eventName = $get('event');
+        // $eventDate = (new \DateTime($get('date')))->format('Y-m-d');
+        // $eventName = $get('event');
 
-        // Generate a unique ID based on event name and date
-        $uniqueId = Str::slug($eventDate . '-' . $eventName);
+        // // Generate a unique ID based on event name and date
+        // $parent = $eventDate . '-' . $eventName;
 
-        return "events/{$uniqueId}/{$folder}";
+        // return "events/{$parent}/{$folder}";
+        return "events/{$folder}";
     }
 
     public static function form(Form $form): Form
@@ -74,6 +75,7 @@ class EventResource extends Resource
                     ->label('Date')
                     ->native(false)
                     ->displayFormat('d M Y')
+                    ->format('Y-m-d')
                     ->default(today())
                     ->columnSpan(3)
                     ->live(onBlur: true, debounce: 500)

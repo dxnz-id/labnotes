@@ -56,4 +56,11 @@ class User extends Authenticatable implements HasAvatar
             ? asset('storage/' . $this->{$avatarColumn})
             : null;
     }
+
+    protected static function booted(): void
+    {
+        self::deleted(function (User $user) {
+            Storage::disk('public')->delete($user->avatar_url);
+        });
+    }
 }

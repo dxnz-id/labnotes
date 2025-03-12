@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
+
+use function Laravel\Prompts\error;
 
 class Event extends Model
 {
@@ -18,11 +21,31 @@ class Event extends Model
     ];
 
     protected $casts = [
-        'responsible_person' => 'array',
-        'participants' => 'array',
+        'responsible_person' => 'json',
+        'participants' => 'json',
         'speaker' => 'array',
-        'photo' => 'array',
-        'video' => 'array',
-        'document' => 'array',
+        'photo' => 'json',
+        'video' => 'json',
+        'document' => 'json',
     ];
+
+    protected static function booted(): void
+    {
+        self::deleted(function (Event $event) {
+            Storage::disk('public')->delete($event->photo);
+            Storage::disk('public')->delete($event->video);
+            Storage::disk('public')->delete($event->document);
+        });
+        self::updating(function (Event $event) {
+            if ($event->isDirty('photo')) {
+                Storage::disk('public')->delete($event->getOriginal('photo'));
+            }
+            if ($event->isDirty('video')) {
+                Storage::disk('public')->delete($event->getOriginal('video'));
+            }
+            if ($event->isDirty('document')) {
+                Storage::disk('public')->delete($event->getOriginal('document'));
+            }
+        });
+    }
 }

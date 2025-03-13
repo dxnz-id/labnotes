@@ -36,15 +36,20 @@ class Event extends Model
             Storage::disk('public')->delete($event->video);
             Storage::disk('public')->delete($event->document);
         });
-        self::updating(function (Event $event) {
-            if ($event->isDirty('photo')) {
-                Storage::disk('public')->delete($event->getOriginal('photo'));
+
+        static::updating(function (Event $event) {
+            $photosToDelete = array_diff($event->getOriginal('photo'), $event->photo);
+            $videosToDelete = array_diff($event->getOriginal('video'), $event->video);
+            $documentsToDelete = array_diff($event->getOriginal('document'), $event->document);
+
+            foreach ($photosToDelete as $photo) {
+                Storage::disk('public')->delete($photo);
             }
-            if ($event->isDirty('video')) {
-                Storage::disk('public')->delete($event->getOriginal('video'));
+            foreach ($videosToDelete as $video) {
+                Storage::disk('public')->delete($video);
             }
-            if ($event->isDirty('document')) {
-                Storage::disk('public')->delete($event->getOriginal('document'));
+            foreach ($documentsToDelete as $document) {
+                Storage::disk('public')->delete($document);
             }
         });
     }

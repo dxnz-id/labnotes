@@ -151,7 +151,7 @@ class EventResource extends Resource
                     ->minSize(64)
                     ->maxSize(32768)
                     ->visibility('private')
-                    ->columnSpan(2)
+                    ->columnSpan(['default' => 6, 'xl' => 2])
                     ->directory(fn(Get $get) => static::getUploadDirectory($get, 'images'))
                     ->maxParallelUploads(3)
                     ->nullable(),
@@ -176,7 +176,7 @@ class EventResource extends Resource
                     ->minSize(512)
                     ->maxSize(524288)
                     ->visibility('private')
-                    ->columnSpan(2)
+                    ->columnSpan(['default' => 6, 'xl' => 2])
                     ->directory(fn(Get $get) => static::getUploadDirectory($get, 'videos'))
                     ->maxParallelUploads(3)
                     ->nullable(),
@@ -206,7 +206,7 @@ class EventResource extends Resource
                     ->minSize(64)
                     ->maxSize(65536)
                     ->visibility('private')
-                    ->columnSpan(2)
+                    ->columnSpan(['default' => 6, 'xl' => 2])
                     ->directory(fn(Get $get) => static::getUploadDirectory($get, 'documents'))
                     ->maxParallelUploads(3)
                     ->nullable(),

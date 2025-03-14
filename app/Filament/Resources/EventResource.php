@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Event;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -16,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Tabs;
@@ -31,9 +33,11 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 use function Laravel\Prompts\text;
 
@@ -183,23 +187,6 @@ class EventResource extends Resource
                 FileUpload::make('document')
                     ->label('Documents')
                     ->panelLayout('grid')
-                    ->acceptedFileTypes([
-                        // Microsoft Office
-                        'application/msword',                                                  // Word (.doc)
-                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // Word (.docx)
-                        'application/vnd.ms-excel',                                            // Excel (.xls)
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',   // Excel (.xlsx)
-                        'application/vnd.ms-powerpoint',                                       // PowerPoint (.ppt)
-                        'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PowerPoint (.pptx)
-
-                        // PDF
-                        'application/pdf',                                                     // PDF documents
-
-                        // Open Document Format
-                        'application/vnd.oasis.opendocument.text',                             // OpenDocument Text (.odt)
-                        'application/vnd.oasis.opendocument.spreadsheet',                      // OpenDocument Spreadsheet (.ods)
-                        'application/vnd.oasis.opendocument.presentation',                     // OpenDocument Presentation (.odp)
-                    ])
                     ->multiple()
                     ->preserveFilenames(true)
                     ->previewable(false)
@@ -366,10 +353,22 @@ class EventResource extends Resource
                                                         TextEntry::make('video')
                                                             ->label(false)
                                                             ->state(function ($record) {
-                                                                return collect($record->document)
+                                                                return collect($record->video)
                                                                     ->map(fn($file) => basename($file))
                                                                     ->toArray();
-                                                            })
+                                                            }),
+                                                        Actions::make([
+                                                            Action::make('view')
+                                                                ->label('View')
+                                                                ->url(fn($record) => "/storage/" . (is_array($record->video) ? $record->video[0] : $record->video))
+                                                                ->icon('heroicon-o-eye')
+                                                                ->openUrlInNewTab(),
+                                                            Action::make('download')
+                                                                ->label('Download')
+                                                                ->action(fn($record) => Storage::download("public/" . (is_array($record->video) ? $record->video[0] : $record->video)))
+                                                                ->icon('heroicon-o-arrow-down')
+                                                                ->openUrlInNewTab(false),
+                                                        ]),
                                                     ])
                                             ]),
                                         Tabs\Tab::make('Documents')
@@ -377,13 +376,22 @@ class EventResource extends Resource
                                                 RepeatableEntry::make('document')
                                                     ->label(false)
                                                     ->schema([
-                                                        TextEntry::make('file')
+                                                        TextEntry::make('document')
                                                             ->label(false)
                                                             ->state(function ($record) {
                                                                 return collect($record->document)
                                                                     ->map(fn($file) => basename($file))
-                                                                    ->toArray();
-                                                            })
+                                                                    ->implode(', ');
+                                                            }),
+                                                        // Actions::make([
+                                                        //     Action::make('view')
+                                                        //         ->label('View')
+                                                        //         ->url(fn($record) => collect($record->document)
+                                                        //             ->map(fn($file) => "/storage/" . $file)
+                                                        //             ->toArray())
+                                                        //         ->icon('heroicon-o-eye')
+                                                        //         ->openUrlInNewTab(),
+                                                        // ]),
                                                     ]),
                                             ]),
                                     ]),

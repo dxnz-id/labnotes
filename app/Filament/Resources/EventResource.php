@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
+use App\Infolists\Components\Document;
 use App\Models\Event;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Forms;
@@ -343,6 +344,7 @@ class EventResource extends Resource
                                             ->schema([
                                                 ImageEntry::make('photo')
                                                     ->label(false)
+                                                    ->openUrlInNewTab()
                                                     ->visibility('private'),
                                             ]),
                                         Tabs\Tab::make('Videos')
@@ -373,26 +375,8 @@ class EventResource extends Resource
                                             ]),
                                         Tabs\Tab::make('Documents')
                                             ->schema([
-                                                RepeatableEntry::make('document')
-                                                    ->label(false)
-                                                    ->schema([
-                                                        TextEntry::make('document')
-                                                            ->label(false)
-                                                            ->state(function ($record) {
-                                                                return collect($record->document)
-                                                                    ->map(fn($file) => basename($file))
-                                                                    ->implode(', ');
-                                                            }),
-                                                        // Actions::make([
-                                                        //     Action::make('view')
-                                                        //         ->label('View')
-                                                        //         ->url(fn($record) => collect($record->document)
-                                                        //             ->map(fn($file) => "/storage/" . $file)
-                                                        //             ->toArray())
-                                                        //         ->icon('heroicon-o-eye')
-                                                        //         ->openUrlInNewTab(),
-                                                        // ]),
-                                                    ]),
+                                                Document::make('document')
+                                                    ->label(false),
                                             ]),
                                     ]),
                             ]),

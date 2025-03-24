@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Infolists\Components\Document;
+use App\Infolists\Components\Video;
 use App\Models\Event;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Forms;
@@ -349,29 +350,8 @@ class EventResource extends Resource
                                             ]),
                                         Tabs\Tab::make('Videos')
                                             ->schema([
-                                                RepeatableEntry::make('video')
-                                                    ->label(false)
-                                                    ->schema([
-                                                        TextEntry::make('video')
-                                                            ->label(false)
-                                                            ->state(function ($record) {
-                                                                return collect($record->video)
-                                                                    ->map(fn($file) => basename($file))
-                                                                    ->toArray();
-                                                            }),
-                                                        Actions::make([
-                                                            Action::make('view')
-                                                                ->label('View')
-                                                                ->url(fn($record) => "/storage/" . (is_array($record->video) ? $record->video[0] : $record->video))
-                                                                ->icon('heroicon-o-eye')
-                                                                ->openUrlInNewTab(),
-                                                            Action::make('download')
-                                                                ->label('Download')
-                                                                ->action(fn($record) => Storage::download("public/" . (is_array($record->video) ? $record->video[0] : $record->video)))
-                                                                ->icon('heroicon-o-arrow-down')
-                                                                ->openUrlInNewTab(false),
-                                                        ]),
-                                                    ])
+                                                Video::make('video')
+                                                    ->label(false),
                                             ]),
                                         Tabs\Tab::make('Documents')
                                             ->schema([
@@ -381,32 +361,6 @@ class EventResource extends Resource
                                     ]),
                             ]),
                     ]),
-
-                // TextEntry::make('event')
-                //     ->label('Event Name'),
-                // TextEntry::make('date')
-                //     ->label('Date')
-                //     ->dateTime('d M Y'),
-                // RepeatableEntry::make('responsible_person')
-                //     ->label('Responsible Persons')
-                //     ->schema([
-                //         TextEntry::make('name')
-                //             ->label('Name'),
-                //         TextEntry::make('email')
-                //             ->label('Email'),
-                //         TextEntry::make('phone_number')
-                //             ->label('Phone Number'),
-                //     ]),
-                // RepeatableEntry::make('participants')
-                //     ->label('Participants')
-                //     ->schema([
-                //         TextEntry::make('name')
-                //             ->label('Name'),
-                //         TextEntry::make('email')
-                //             ->label('Email'),
-                //         TextEntry::make('phone_number')
-                //             ->label('Phone Number'),
-                //     ]),
             ]);
     }
 

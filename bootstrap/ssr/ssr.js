@@ -346,8 +346,8 @@ createServer(
     render: ReactDOMServer.renderToString,
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(
-      `./Pages/${name}.tsx`,
-      /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.tsx": () => import("./assets/ConfirmPassword-CxtXspTK.js"), "./Pages/Auth/ForgotPassword.tsx": () => import("./assets/ForgotPassword-DPLbprux.js"), "./Pages/Auth/Login.tsx": () => import("./assets/Login-DjK1tI6u.js"), "./Pages/Auth/Register.tsx": () => import("./assets/Register-rVQVy18K.js"), "./Pages/Auth/ResetPassword.tsx": () => import("./assets/ResetPassword-JC2MGO6J.js"), "./Pages/Auth/VerifyEmail.tsx": () => import("./assets/VerifyEmail-CXamYm8l.js"), "./Pages/Dashboard.tsx": () => import("./assets/Dashboard-B0fMMiaO.js"), "./Pages/Profile/Edit.tsx": () => import("./assets/Edit-D0aGVfq0.js"), "./Pages/Profile/Partials/DeleteUserForm.tsx": () => import("./assets/DeleteUserForm-4YRBC_U2.js"), "./Pages/Profile/Partials/UpdatePasswordForm.tsx": () => import("./assets/UpdatePasswordForm-Fv1LGP32.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.tsx": () => import("./assets/UpdateProfileInformationForm-BDmMqcn3.js"), "./Pages/Welcome.tsx": () => import("./assets/Welcome-By_mvvLX.js") })
+      `./Pages/${name}.jsx`,
+      /* @__PURE__ */ Object.assign({ "./Pages/Homepage.jsx": () => import("./assets/Homepage-yr8tgXhp.js"), "./Pages/Welcome.jsx": () => import("./assets/Welcome-ByNhCfvu.js") })
     ),
     setup: ({ App, props }) => {
       global.route = (name, params, absolute) => T(name, params, absolute, {

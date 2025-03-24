@@ -11,11 +11,14 @@
         "devonab/filament-easy-footer": "^1.1",
         "filament/filament": "^3.3",
         "illuminate/contracts": "*",
+        "inertiajs/inertia-laravel": "^2.0",
         "joaopaulolndev/filament-edit-profile": "^1.0",
-        "laravel/framework": "^11.44",
+        "laravel/breeze": "^2.3",
+        "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "swisnl/filament-backgrounds": "^1.1",
-        "webplusm/gallery-json-media": "^2.2"
+        "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -24,7 +27,8 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "pestphp/pest": "^3.7",
+        "pestphp/pest-plugin-laravel": "^3.1"
     },
     "autoload": {
         "psr-4": {

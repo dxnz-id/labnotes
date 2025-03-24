@@ -1,4 +1,3 @@
-{{-- filepath: /home/dxnz/Documents/labnotes/resources/views/infolists/components/document.blade.php --}}
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @if(is_array($getState()))
         @foreach($getState() as $item)

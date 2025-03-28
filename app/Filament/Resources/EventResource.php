@@ -61,7 +61,7 @@ class EventResource extends Resource
             ->schema([
                 TextInput::make('event')
                     ->label('Event Name')
-                    ->columnSpan(3)
+                    ->columnSpan(['default' => 6, 'lg' => 4])
                     ->required(),
                 DatePicker::make('date')
                     ->label('Date')
@@ -69,7 +69,7 @@ class EventResource extends Resource
                     ->displayFormat('d M Y')
                     ->format('Y-m-d')
                     ->default(today())
-                    ->columnSpan(3)
+                    ->columnSpan(['default' => 6, 'lg' => 2])
                     ->live(onBlur: true, debounce: 500)
                     ->required(),
                 Repeater::make('responsible_person')

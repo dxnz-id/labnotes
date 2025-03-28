@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->favicon(asset('icons/favicon.svg'))
             ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Purple,

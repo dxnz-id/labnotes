@@ -5,7 +5,7 @@ import { Head } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { BsArrowRight } from 'react-icons/bs';
 
-export default function Homepage() {
+export default function Homepage(props) {
     useEffect(() => {
         const textArray = [
             'Center of Excellence.',
@@ -78,7 +78,13 @@ export default function Homepage() {
 
     return (
         <>
-            <Head title="Portfolio" />
+            <Head title={props.title}>
+                <link
+                    rel="icon"
+                    type="image/svg+xml"
+                    href="/icons/favicon.svg"
+                />
+            </Head>
             <Cursor />
             <div className="flex flex-col items-center justify-center text-gray-900 transition dark:bg-black dark:text-white">
                 <Navbar />

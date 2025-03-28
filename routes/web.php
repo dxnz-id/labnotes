@@ -7,8 +7,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Homepage', [
-        'title' => "Muhammad La'azidannak Rusda",
-        'description' => 'Chill'
+        'title' => "Welcome",
     ]);
 });
 

@@ -93,8 +93,8 @@ export default function Homepage(props) {
                     className="container flex h-screen items-center justify-center text-center"
                     id="section-1"
                 >
-                    <div>
-                        <p className="">
+                    <div className="flex flex-col items-center justify-center">
+                        <p>
                             <span id="type" className="text-primary"></span>
                             <span id="typeCursor" className="transition">
                                 |
@@ -105,10 +105,10 @@ export default function Homepage(props) {
                         </h1>
                         <a
                             href="/admin"
-                            className="group mt-4 flex items-center justify-center space-x-2 opacity-75 transition hover:opacity-90"
+                            className="group flex items-center justify-center space-x-2 p-4 opacity-90 transition hover:opacity-100"
                         >
                             <span className="transition">Dashboard</span>
-                            <BsArrowRight className="text-3xl transition-transform group-hover:translate-x-2" />
+                            <BsArrowRight className="text-3xl transition-all group-hover:translate-x-2 group-hover:text-purple-500" />
                         </a>
                     </div>
                 </section>

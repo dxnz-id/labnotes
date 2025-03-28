@@ -53,14 +53,14 @@ const Navbar = () => {
                     <div className="flex">
                         <a
                             href="/"
-                            className="px-4 font-semibold text-gray-600 transition duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                            className="px-4 font-semibold transition duration-200 hover:text-purple-500 dark:text-gray-300 dark:hover:text-purple-500"
                         >
                             {import.meta.env.VITE_APP_NAME || 'Lorem Ipsum'}
                         </a>
                     </div>
 
                     {/* Single Toggle Button */}
-                    <div className="flex items-center">
+                    <div className="flex items-center hover:text-purple-500">
                         <button
                             onClick={toggleMode}
                             className="rounded-full p-2"

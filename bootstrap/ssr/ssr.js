@@ -347,7 +347,7 @@ createServer(
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(
       `./Pages/${name}.jsx`,
-      /* @__PURE__ */ Object.assign({ "./Pages/Homepage.jsx": () => import("./assets/Homepage-yr8tgXhp.js"), "./Pages/Welcome.jsx": () => import("./assets/Welcome-ByNhCfvu.js") })
+      /* @__PURE__ */ Object.assign({ "./Pages/Dashboard.jsx": () => import("./assets/Dashboard-BRKvfPWm.js"), "./Pages/Homepage.jsx": () => import("./assets/Homepage-Com18JUU.js") })
     ),
     setup: ({ App, props }) => {
       global.route = (name, params, absolute) => T(name, params, absolute, {

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EventResource\Pages;
 use App\Infolists\Components\Document;
+use App\Infolists\Components\Person;
 use App\Infolists\Components\Video;
 use App\Models\Event;
 use Filament\Forms\Components\DatePicker;
@@ -315,46 +316,25 @@ class EventResource extends Resource
                                     }),
                             ]),
                         Tabs\Tab::make('People')
-                            ->columns(2)
                             ->schema([
                                 Tabs::make()
                                     ->tabs([
                                         Tabs\Tab::make('Responsible Persons')
                                             ->schema([
-                                                TextEntry::make('responsible_person')
-                                                    ->label(false)
-                                                    ->state(function ($record) {
-                                                        if (!is_array($record->responsible_person)) {
-                                                            return [];
-                                                        }
-
-                                                        return collect($record->responsible_person)
-                                                            ->map(fn($person) => "{$person['name']} ({$person['email']}, {$person['phone_number']})")
-                                                            ->filter()
-                                                            ->toArray();
-                                                    }),
+                                                Person::make('responsible_person')
+                                                    ->label(false),
                                             ]),
                                         Tabs\Tab::make('Participants')
                                             ->schema([
-                                                TextEntry::make('participants')
+                                                Person::make('participants')
                                                     ->label(false)
-                                                    ->state(function ($record) {
-                                                        if (!is_array($record->participants)) {
-                                                            return [];
-                                                        }
-
-                                                        return collect($record->participants)
-                                                            ->map(fn($participant) => "{$participant['name']} ({$participant['email']}, {$participant['phone_number']})")
-                                                            ->filter()
-                                                            ->toArray();
-                                                    }),
                                             ]),
                                         Tabs\Tab::make('Speakers')
                                             ->schema([
                                                 TextEntry::make('speaker')
                                                     ->label(false)
                                                     ->badge()
-                                                    ->color('success'),
+                                                    ->color('gray'),
                                             ]),
                                     ]),
                             ]),

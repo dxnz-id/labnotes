@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\LatestEvents;
 use Dotswan\FilamentLaravelPulse\Widgets\PulseCache;
 use Dotswan\FilamentLaravelPulse\Widgets\PulseExceptions;
 use Dotswan\FilamentLaravelPulse\Widgets\PulseQueues;
@@ -25,36 +26,38 @@ class Dashboard extends \Filament\Pages\Dashboard
         return 12;
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ActionGroup::make([
-                Action::make('1h')
-                    ->action(fn() => $this->redirect(route('filament.manager.pages.dashboard'))),
-                Action::make('24h')
-                    ->action(fn() => $this->redirect(route('filament.manager.pages.dashboard', ['period' => '24_hours']))),
-                Action::make('7d')
-                    ->action(fn() => $this->redirect(route('filament.manager.pages.dashboard', ['period' => '7_days']))),
-            ])
-                ->label(__('Filter'))
-                ->icon('heroicon-m-funnel')
-                ->size(ActionSize::Small)
-                ->color('gray')
-                ->button()
-        ];
-    }
+    // protected function getHeaderActions(): array
+    // {
+    //     return [
+    //         ActionGroup::make([
+    //             Action::make('1h')
+    //                 ->action(fn() => $this->redirect(route('filament.manager.pages.dashboard'))),
+    //             Action::make('24h')
+    //                 ->action(fn() => $this->redirect(route('filament.manager.pages.dashboard', ['period' => '24_hours']))),
+    //             Action::make('7d')
+    //                 ->action(fn() => $this->redirect(route('filament.manager.pages.dashboard', ['period' => '7_days']))),
+    //         ])
+    //             ->label(__('Filter'))
+    //             ->icon('heroicon-m-funnel')
+    //             ->size(ActionSize::Small)
+    //             ->color('gray')
+    //             ->button()
+    //     ];
+    // }
 
     public function getWidgets(): array
     {
         return [
-            PulseServers::class,
-            PulseCache::class,
-            PulseExceptions::class,
+            LatestEvents::class,
+
+            // PulseServers::class,
+            // PulseCache::class,
+            // PulseExceptions::class,
             PulseUsage::class,
-            PulseQueues::class,
+            // PulseQueues::class,
             // PulseSlowQueries::class,
-            PulseSlowRequests::class,
-            PulseSlowJobs::class,
+            // PulseSlowRequests::class,
+            // PulseSlowJobs::class,
             // PulseSlowOutGoingRequests::class
         ];
     }

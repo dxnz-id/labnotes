@@ -44,13 +44,6 @@ class EventResource extends Resource
 
     protected static function getUploadDirectory(Get $get, string $folder): string
     {
-        // $eventDate = (new \DateTime($get('date')))->format('Y-m-d');
-        // $eventName = $get('event');
-
-        // // Generate a unique ID based on event name and date
-        // $parent = $eventDate . '-' . $eventName;
-
-        // return "events/{$parent}/{$folder}";
         return "events/{$folder}";
     }
 
@@ -242,7 +235,6 @@ class EventResource extends Resource
                     }),
             ])
             ->actions([
-
                 ViewAction::make()->label(false)->icon(false)->slideOver(),
                 EditAction::make(),
                 DeleteAction::make(),
@@ -321,6 +313,50 @@ class EventResource extends Resource
                                     ->state(function ($record) {
                                         return count($record->document);
                                     }),
+                            ]),
+                        Tabs\Tab::make('People')
+                            ->columns(2)
+                            ->schema([
+                                Tabs::make()
+                                    ->tabs([
+                                        Tabs\Tab::make('Responsible Persons')
+                                            ->schema([
+                                                TextEntry::make('responsible_person')
+                                                    ->label(false)
+                                                    ->state(function ($record) {
+                                                        if (!is_array($record->responsible_person)) {
+                                                            return [];
+                                                        }
+
+                                                        return collect($record->responsible_person)
+                                                            ->map(fn($person) => "{$person['name']} ({$person['email']}, {$person['phone_number']})")
+                                                            ->filter()
+                                                            ->toArray();
+                                                    }),
+                                            ]),
+                                        Tabs\Tab::make('Participants')
+                                            ->schema([
+                                                TextEntry::make('participants')
+                                                    ->label(false)
+                                                    ->state(function ($record) {
+                                                        if (!is_array($record->participants)) {
+                                                            return [];
+                                                        }
+
+                                                        return collect($record->participants)
+                                                            ->map(fn($participant) => "{$participant['name']} ({$participant['email']}, {$participant['phone_number']})")
+                                                            ->filter()
+                                                            ->toArray();
+                                                    }),
+                                            ]),
+                                        Tabs\Tab::make('Speakers')
+                                            ->schema([
+                                                TextEntry::make('speaker')
+                                                    ->label(false)
+                                                    ->badge()
+                                                    ->color('success'),
+                                            ]),
+                                    ]),
                             ]),
                         Tabs\Tab::make('Media')
                             ->schema([

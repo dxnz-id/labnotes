@@ -184,6 +184,7 @@ class EventResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('date', 'desc') // Sort by date in descending order by default
             ->columns([
                 TextColumn::make('event')
                     ->label('Event Name')
